@@ -1,0 +1,18 @@
+{
+  "name": "infoplanet",
+  "version": "1.0.0",
+  "description": "threejs web app for displaying basic info on planets within our solar system",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build"
+  },
+  "author": "ecStewart",
+  "license": "ISC",
+  "devDependencies": {
+    "vite": "^4.5.0"
+  },
+  "dependencies": {
+    "three": "^0.158.0"
+  }
+}
