@@ -10,6 +10,11 @@ const gltfLoader = new GLTFLoader()
 const textureLoader = new THREE.TextureLoader()
 
 /**
+ * Textures
+ */
+const particlesTexture = textureLoader.load('/textures/4.png')
+
+/**
  * Cursor
  */
 
@@ -27,7 +32,7 @@ window.addEventListener('mousemove', (event) => {
  */
 // Debug
 const gui = new GUI()
-const global = {}
+const debugObject = {}
 
 // Canvas
 const canvas = document.querySelector('canvas.webgl')
@@ -36,9 +41,11 @@ const canvas = document.querySelector('canvas.webgl')
 const scene = new THREE.Scene()
 
 // Background Color
-scene.background = new THREE.Color('#00141F')
-// Fix this from threejs lesson, hex isnt correct in gui
-gui.addColor(scene, 'background')
+debugObject.color = '#00141F'
+scene.background = new THREE.Color(debugObject.color)
+gui.addColor(scene, 'background').onChange(() => {
+    scene.background.color.set(debugObject.color)
+})
 
 /**
  * Lights
@@ -67,11 +74,9 @@ gui.add(directionalLight, 'intensity').min(0).max(3).step(0.001).name('pointLigh
 // Particle Parameters
 const parameters = {}
 parameters.count = 10000
-parameters.size = 0.001
-parameters.maxRadius = 100
-parameters.minRadius = 50
-parameters.randomness = 0.2
-parameters.randomnessPower = 3
+parameters.size = 0.05
+parameters.maxRadius = 25
+parameters.minRadius = 10
 parameters.insideColor = '#ff9595'
 parameters.outsideColor = '#1b3984'
 
@@ -79,6 +84,7 @@ let particleGeometry = null
 let particleMaterial = null
 let points = null
 
+// Generate Particles Function
 const generateParticles = () => 
 {
     /**
@@ -98,13 +104,15 @@ const generateParticles = () =>
 
     const positions = new Float32Array(parameters.count * 3)
     const colors = new Float32Array(parameters.count * 3)
-    const scales = new Float32Array(parameters.count * 1)
+    
+    const colorInside = new THREE.Color(parameters.insideColor)
+    const colorOutside = new THREE.Color(parameters.outsideColor)
 
     for(let i = 0; i < parameters.count; i++)
     {
         const i3 = i * 3
 
-        // Position
+        // Positions
         let innerRadius = parameters.minRadius
         const outterRadius = ((Math.random() - 0.5) * parameters.maxRadius)
         
@@ -126,13 +134,9 @@ const generateParticles = () =>
 
         positions[i3    ] = randomX 
         positions[i3 + 1] = randomY 
-        positions[i3 + 2] = randomZ
+        positions[i3 + 2] = randomZ 
 
         // Color
-        
-        const colorInside = new THREE.Color(parameters.insideColor)
-        const colorOutside = new THREE.Color(parameters.outsideColor)
-
         const mixedColor = colorInside.clone()
         mixedColor.lerp(colorOutside, radius / parameters.maxRadius)
 
@@ -140,24 +144,23 @@ const generateParticles = () =>
         colors[i3 + 1] = mixedColor.g
         colors[i3 + 2] = mixedColor.b
 
-        // Scales
-        scales[i] = Math.random()
     }
 
     particleGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3))
     particleGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3))
-    geometry.setAttribute('aScale', new THREE.BufferAttribute(scales, 1))
 
     /** 
      * Material
      */
     particleMaterial = new THREE.PointsMaterial({
-        size: parameters.size * parameters.scales,
+        size: parameters.size,
         sizeAttenuation: true,
         depthWrite: false,
         blending: THREE.AdditiveBlending,
         vertexColors: true
     })
+
+    particleMaterial.alphaMap = particlesTexture;
 
     /**
      * Points
@@ -168,12 +171,12 @@ const generateParticles = () =>
 
 generateParticles()
 
+// Debug Panel Paraments
+
 gui.add(parameters, 'count').min(100).max(100000).step(100).onFinishChange(generateParticles)
-gui.add(parameters, 'size').min(0.001).max(0.1).step(0.001).onFinishChange(generateParticles)
+gui.add(parameters, 'size').min(0.01).max(0.1).step(0.001).onFinishChange(generateParticles)
 gui.add(parameters, 'maxRadius').min(1).max(500).step(0.01).onFinishChange(generateParticles)
 gui.add(parameters, 'minRadius').min(1).max(100).step(0.01).onFinishChange(generateParticles)
-gui.add(parameters, 'randomness').min(0).max(2).step(0.001).onFinishChange(generateParticles)
-gui.add(parameters, 'randomnessPower').min(1).max(10).step(0.001).onFinishChange(generateParticles)
 gui.addColor(parameters, 'insideColor').onFinishChange(generateParticles)
 gui.addColor(parameters, 'outsideColor').onFinishChange(generateParticles)
 
