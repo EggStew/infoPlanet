@@ -68,53 +68,79 @@ gui.add(directionalLight, 'intensity').min(0).max(3).step(0.001).name('pointLigh
 const planetGeometry = new THREE.SphereGeometry()
 const planetMaterial = new THREE.MeshNormalMaterial()
 
+function newPlanet(pos){
+    var planet = new THREE.Mesh(planetGeometry, planetMaterial)
+    planet.scale.set(0.5, 0.5, 0.5)
+    planet.position.set(0, 0, 0)
+    return planet
+}
+
+var planets = [
+    {
+        name: "Murcury",
+        mesh: newPlanet(2),
+        orbitalPeriod: 0.241, // 4.15
+        distanceFromSun: 0.387, // 2.59
+    },
+    {
+        name: "Venus",
+        mesh: newPlanet(4),
+        orbitalPeriod: 0.615,
+        distanceFromSun: 0.723,
+    },
+    {
+        name: "Earth",
+        mesh: newPlanet(6),
+        orbitalPeriod: 1.0,
+        distanceFromSun: 1.0,
+    },
+    {
+        name: "Mars",
+        mesh: newPlanet(8),
+        orbitalPeriod: 1.88,
+        distanceFromSun: 1.52,
+    },
+    {
+        name: "Jupiter",
+        mesh: newPlanet(10),
+        orbitalPeriod: 11.9,
+        distanceFromSun: 5.20,
+    },
+    {
+        name: "Saturn",
+        mesh: newPlanet(12),
+        orbitalPeriod: 29.4,
+        distanceFromSun: 9.57,
+    },
+    {
+        name: "Uranus",
+        mesh: newPlanet(14),
+        orbitalPeriod: 83.7,
+        distanceFromSun: 19.17,
+    },
+    {
+        name: "Neptune",
+        mesh: newPlanet(16),
+        orbitalPeriod: 163.7,
+        distanceFromSun: 30.18,
+    },
+    {
+        name: "Pluto",
+        mesh: newPlanet(18),
+        orbitalPeriod: 247.9,
+        distanceFromSun: 39.48,
+    },
+
+]
+
+// Sun
 const solar = new THREE.Mesh(planetGeometry, planetMaterial)
 scene.add(solar)
 
-const planet1 = new THREE.Mesh(planetGeometry, planetMaterial)
-planet1.scale.set(0.5, 0.5, 0.5)
-planet1.position.set(2, 0, 0)
-scene.add(planet1)
-
-const planet2 = new THREE.Mesh(planetGeometry, planetMaterial)
-planet2.scale.set(0.5, 0.5, 0.5)
-planet2.position.set(4, 0, 0)
-scene.add(planet2)
-
-const planet3 = new THREE.Mesh(planetGeometry, planetMaterial)
-planet3.scale.set(0.5, 0.5, 0.5)
-planet3.position.set(6, 0, 0)
-scene.add(planet3)
-
-const planet4 = new THREE.Mesh(planetGeometry, planetMaterial)
-planet4.scale.set(0.5, 0.5, 0.5)
-planet4.position.set(8, 0, 0)
-scene.add(planet4)
-
-const planet5 = new THREE.Mesh(planetGeometry, planetMaterial)
-planet5.scale.set(0.5, 0.5, 0.5)
-planet5.position.set(10, 0, 0)
-scene.add(planet5)
-
-const planet6 = new THREE.Mesh(planetGeometry, planetMaterial)
-planet6.scale.set(0.5, 0.5, 0.5)
-planet6.position.set(12, 0, 0)
-scene.add(planet6)
-
-const planet7 = new THREE.Mesh(planetGeometry, planetMaterial)
-planet7.scale.set(0.5, 0.5, 0.5)
-planet7.position.set(14, 0, 0)
-scene.add(planet7)
-
-const planet8 = new THREE.Mesh(planetGeometry, planetMaterial)
-planet8.scale.set(0.5, 0.5, 0.5)
-planet8.position.set(16, 0, 0)
-scene.add(planet8)
-
-const planet9 = new THREE.Mesh(planetGeometry, planetMaterial)
-planet9.scale.set(0.5, 0.5, 0.5)
-planet9.position.set(18, 0, 0)
-scene.add(planet9)
+// Planets
+for(const planet of planets){
+    scene.add(planet.mesh)
+}
 
 /**
  * Particles
@@ -284,9 +310,9 @@ window.addEventListener('dblclick', () =>
  */
 // Base camera
 const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100)
-camera.position.x = -2
-camera.position.y = 2
-camera.position.z = 3
+camera.position.x = -20
+camera.position.y = 20
+camera.position.z = 30
 scene.add(camera)
 
 // Controls
@@ -303,43 +329,6 @@ renderer.setSize(sizes.width, sizes.height)
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 
 /**
- *  Orbit Period Adjustment
- */
-
-const translate = (value, leftMin, leftMax, rightMin, rightMax) => 
-{
-    // # Figure out how 'wide' each range is
-    let leftSpan = leftMax - leftMin
-    let rightSpan = rightMax - rightMin
-
-    // # Convert the left range into a 0-1 range (float)
-    let valueScaled = (value - leftMin) / leftSpan
-
-    // # Convert the 0-1 range into a value in the right range.
-    return rightMin + (valueScaled * rightSpan)
-}
-
-let planetOrbitSpeed1 = translate(0.241, 0.241, 247.9, 0, 1)
-let planetOrbitSpeed2 = translate(0.615, 0.241, 247.9, 0, 1)
-let planetOrbitSpeed3 = translate(1.0, 0.241, 247.9, 0, 1)
-let planetOrbitSpeed4 = translate(1.88, 0.241, 247.9, 0, 1)
-let planetOrbitSpeed5 = translate(5.20, 0.241, 247.9, 0, 1)
-let planetOrbitSpeed6 = translate(9.57, 0.241, 247.9, 0, 1)
-let planetOrbitSpeed7 = translate(19.17, 0.241, 247.9, 0, 1)
-let planetOrbitSpeed8 = translate(30.18 , 0.241, 247.9, 0, 1)
-let planetOrbitSpeed9 = translate(247.9, 0.241, 247.9, 0, 1)
-
-const planetOrbitAvg = 
-    (planetOrbitSpeed1 + planetOrbitSpeed2 +
-    planetOrbitSpeed3 + planetOrbitSpeed4 + 
-    planetOrbitSpeed5 + planetOrbitSpeed6 +
-    planetOrbitSpeed7 + planetOrbitSpeed8 + 
-    planetOrbitSpeed9) / 9
-
-console.log(planetOrbitAvg)
-
-
-/**
  * Animate
  */
 const clock = new THREE.Clock()
@@ -348,50 +337,17 @@ const tick = () =>
 {
     const elapsedTime = clock.getElapsedTime()
 
-    // Update Planet Rotations
-    // Determines Speed of orbit
-    const planetAngle = elapsedTime
-
-    // Creates circular orbit, multiply to increasing distance from center
-
-    // Murcury
-    planet1.position.x = Math.cos(planetAngle * planetOrbitSpeed1) * 0.387  
-    planet1.position.z = Math.sin(planetAngle * planetOrbitSpeed1) * 0.387 
-
-    // Venus
-    planet2.position.x = Math.cos(planetAngle * planetOrbitSpeed2) * 0.723 
-    planet2.position.z = Math.sin(planetAngle * planetOrbitSpeed2) * 0.723 
-
-    // Earth
-    planet3.position.x = Math.cos(planetAngle * planetOrbitSpeed3) * 1
-    planet3.position.z = Math.sin(planetAngle * planetOrbitSpeed3) * 1
-
-    // Mars
-    planet4.position.x = Math.cos(planetAngle * planetOrbitSpeed4) * 1.52 
-    planet4.position.z = Math.sin(planetAngle * planetOrbitSpeed4) * 1.52 
-
-    // Jupiter
-    planet5.position.x = Math.cos(planetAngle * planetOrbitSpeed5) * 5.20 
-    planet5.position.z = Math.sin(planetAngle * planetOrbitSpeed5) * 5.20 
-
-    // Saturn
-    planet6.position.x = Math.cos(planetAngle * planetOrbitSpeed6) * 9.57 
-    planet6.position.z = Math.sin(planetAngle * planetOrbitSpeed6) * 9.57 
-
-    // Uranus
-    planet7.position.x = Math.cos(planetAngle * planetOrbitSpeed7) * 19.17 
-    planet7.position.z = Math.sin(planetAngle * planetOrbitSpeed7) * 19.17 
-
-    // Neptune
-    planet8.position.x = Math.cos(planetAngle * planetOrbitSpeed8) * 30.18 
-    planet8.position.z = Math.sin(planetAngle * planetOrbitSpeed8) * 30.18 
-
-    // Pluto
-    planet9.position.x = Math.cos(planetAngle * planetOrbitSpeed9) * 39.48 
-    planet9.position.z = Math.sin(planetAngle * planetOrbitSpeed9) * 39.48 
-
-
     // Update Planet Orbits
+
+    // Determines Speed of orbit and starting position
+    const planetAngle = 10 + elapsedTime * 0.025
+
+    // Loop through planet meshes and update xz of orbit using orbital period and distnace from sun
+    for(const planet of planets){
+
+        planet.mesh.position.x = Math.cos(planetAngle * Math.log(planet.orbitalPeriod * 4.15)) * (Math.log((planet.distanceFromSun * 2.59)) * 10)
+        planet.mesh.position.z = Math.sin(planetAngle * Math.log(planet.orbitalPeriod * 4.15)) * (Math.log((planet.distanceFromSun * 2.59)) * 10)
+    }
 
     // Update controls
     controls.update()
