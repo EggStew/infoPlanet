@@ -65,74 +65,100 @@ gui.add(directionalLight, 'intensity').min(0).max(3).step(0.001).name('pointLigh
 /**
  * Models
  */
+
+gltfLoader.load(
+    '/models/Solar_System_3D_Model/Planets.glb',
+    (glb) => {
+        scene.add(glb.scene)
+    }
+)
+
 const planetGeometry = new THREE.SphereGeometry()
 const planetMaterial = new THREE.MeshNormalMaterial()
 
-function newPlanet(pos){
+function newPlanet(diameter, color){
     var planet = new THREE.Mesh(planetGeometry, planetMaterial)
-    planet.scale.set(0.5, 0.5, 0.5)
+    planet.material.color = new THREE.Color(color)
+    planet.scale.set(diameter, diameter, diameter)
     planet.position.set(0, 0, 0)
     return planet
 }
 
-var planets = [
+const planets = [
     {
         name: "Murcury",
-        mesh: newPlanet(2),
+        mesh: newPlanet(Math.log(0.383 * 5.35 + 1)),
         orbitalPeriod: 0.241, // 4.15
         distanceFromSun: 0.387, // 2.59
+        rotationPeriod: 58.8,
+        diameter: 0.383,
     },
     {
         name: "Venus",
-        mesh: newPlanet(4),
+        mesh: newPlanet(Math.log(0.949 * 5.35 + 1)),
         orbitalPeriod: 0.615,
         distanceFromSun: 0.723,
+        rotationPeriod: -244,
+        diameter: 0.949,
     },
     {
         name: "Earth",
-        mesh: newPlanet(6),
+        mesh: newPlanet(Math.log(1.0 * 5.35 + 1)),
         orbitalPeriod: 1.0,
         distanceFromSun: 1.0,
+        rotationPeriod: 1.0,
+        diameter: 1.0,
     },
     {
         name: "Mars",
-        mesh: newPlanet(8),
+        mesh: newPlanet(Math.log(0.532 * 5.35 + 1)),
         orbitalPeriod: 1.88,
         distanceFromSun: 1.52,
+        rotationPeriod: 1.03,
+        diameter: 0.532,
     },
     {
         name: "Jupiter",
-        mesh: newPlanet(10),
+        mesh: newPlanet(Math.log(11.21 * 5.35 + 1)),
         orbitalPeriod: 11.9,
         distanceFromSun: 5.20,
+        rotationPeriod: 0.415,
+        diameter: 11.21,
     },
     {
         name: "Saturn",
-        mesh: newPlanet(12),
+        mesh: newPlanet(Math.log(9.45 * 5.35 + 1)),
         orbitalPeriod: 29.4,
         distanceFromSun: 9.57,
+        rotationPeriod: 0.445,
+        diameter: 9.45,
     },
     {
         name: "Uranus",
-        mesh: newPlanet(14),
+        mesh: newPlanet(Math.log(4.01 * 5.35 + 1)),
         orbitalPeriod: 83.7,
         distanceFromSun: 19.17,
+        rotationPeriod: -0.720,
+        diameter: 4.01,
     },
     {
         name: "Neptune",
-        mesh: newPlanet(16),
+        mesh: newPlanet(Math.log(3.88 * 5.35 + 1)),
         orbitalPeriod: 163.7,
         distanceFromSun: 30.18,
+        rotationPeriod: 0.673,
+        diameter: 3.88,
     },
     {
         name: "Pluto",
-        mesh: newPlanet(18),
+        mesh: newPlanet(Math.log(0.187 * 5.35 + 1)),
         orbitalPeriod: 247.9,
         distanceFromSun: 39.48,
+        rotationPeriod: 6.41,
+        diameter: 0.187, //5.35
     },
 
 ]
-
 // Sun
 const solar = new THREE.Mesh(planetGeometry, planetMaterial)
 scene.add(solar)
@@ -254,7 +280,6 @@ gui.add(parameters, 'maxRadius').min(1).max(500).step(0.01).onFinishChange(gener
 gui.add(parameters, 'minRadius').min(1).max(100).step(0.01).onFinishChange(generateParticles)
 gui.addColor(parameters, 'insideColor').onFinishChange(generateParticles)
 gui.addColor(parameters, 'outsideColor').onFinishChange(generateParticles)
-
 /**
  * Sizes
  */
@@ -345,8 +370,12 @@ const tick = () =>
     // Loop through planet meshes and update xz of orbit using orbital period and distnace from sun
     for(const planet of planets){
 
-        planet.mesh.position.x = Math.cos(planetAngle * Math.log(planet.orbitalPeriod * 4.15)) * (Math.log((planet.distanceFromSun * 2.59)) * 10)
-        planet.mesh.position.z = Math.sin(planetAngle * Math.log(planet.orbitalPeriod * 4.15)) * (Math.log((planet.distanceFromSun * 2.59)) * 10)
+        // Orbit Speed and Distance
+        planet.mesh.position.x = Math.cos(planetAngle * Math.log((planet.orbitalPeriod * 4.15) + 1)) * (Math.log((planet.distanceFromSun * 2.59)+ 1) * 15)
+        planet.mesh.position.z = Math.sin(planetAngle * Math.log((planet.orbitalPeriod * 4.15) + 1)) * (Math.log((planet.distanceFromSun * 2.59) + 1) * 15)
+        
+        // Planet Rotation
+        planet.mesh.rotation.y = elapsedTime * planet.rotationPeriod
     }
 
     // Update controls
