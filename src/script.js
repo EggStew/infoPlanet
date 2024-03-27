@@ -73,46 +73,55 @@ const planetsOrbitalRotationInfo = [
         name: "Murcury",
         orbitalPeriod: 0.241, // 4.15
         rotationPeriod: 58.8,
+        distanceFromSun: 1,
     },
     {
         name: "Venus",
         orbitalPeriod: 0.615,
         rotationPeriod: -244,
+        distanceFromSun: 1,
     },
     {
         name: "Earth",
         orbitalPeriod: 1.0,
         rotationPeriod: 1.0,
+        distanceFromSun: 1,
     },
     {
         name: "Mars",
         orbitalPeriod: 1.88,
         rotationPeriod: 1.03,
+        distanceFromSun: 1,
     },
     {
         name: "Jupiter",
         orbitalPeriod: 11.9,
         rotationPeriod: 0.415,
+        distanceFromSun: 1,
     },
     {
         name: "Saturn",
         orbitalPeriod: 29.4,
         rotationPeriod: 0.445,
+        distanceFromSun: 1,
     },
     {
         name: "Uranus",
         orbitalPeriod: 83.7,
         rotationPeriod: -0.720,
+        distanceFromSun: 1,
     },
     {
         name: "Neptune",
         orbitalPeriod: 163.7,
         rotationPeriod: 0.673,
+        distanceFromSun: 1,
     },
     {
         name: "Pluto",
         orbitalPeriod: 247.9,
         rotationPeriod: 6.41,
+        distanceFromSun: 1,
     },
 ]
 
@@ -148,7 +157,8 @@ gltfLoader.load(
                     z: child.rotation.z
                 },
                 orbitalPeriod: orbitalPeriod,
-                rotationPeriod: rotationPeriod
+                rotationPeriod: rotationPeriod,
+                distanceFromSun: distanceFromSun
             };
             
             extractedPlanetData.push(data);
