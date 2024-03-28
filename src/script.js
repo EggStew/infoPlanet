@@ -33,6 +33,13 @@ window.addEventListener('mousemove', (event) => {
 // Debug
 const gui = new GUI()
 const debugObject = {}
+debugObject.orbiteRate = 0.5
+debugObject.rotationRate = 0.05
+debugObject.distanceFromSunRate = 0.5
+
+gui.add(debugObject, 'orbiteRate').min(0.1).max(1).step(0.1)
+gui.add(debugObject, 'rotationRate').min(0.01).max(0.1).step(0.01)
+gui.add(debugObject, 'distanceFromSunRate').min(0.1).max(1).step(0.1)
 
 // Canvas
 const canvas = document.querySelector('canvas.webgl')
@@ -70,58 +77,64 @@ gui.add(directionalLight, 'intensity').min(0).max(3).step(0.001).name('pointLigh
 
 const planetsOrbitalRotationInfo = [
     {
-        name: "Murcury",
-        orbitalPeriod: 0.241, // 4.15
-        rotationPeriod: 58.8,
+        name: "Mercury",
+        orbitalPeriod:   1, // 4.15
+        rotationPeriod:  8,
         distanceFromSun: 1,
     },
     {
         name: "Venus",
-        orbitalPeriod: 0.615,
-        rotationPeriod: -244,
-        distanceFromSun: 1,
+        orbitalPeriod:   2,
+        rotationPeriod: -9,
+        distanceFromSun: 2,
     },
     {
         name: "Earth",
-        orbitalPeriod: 1.0,
-        rotationPeriod: 1.0,
-        distanceFromSun: 1,
+        orbitalPeriod:   3,
+        rotationPeriod:  5,
+        distanceFromSun: 3,
+    },
+    {
+        name: "Moon",
+        orbitalPeriod:   3,
+        rotationPeriod:  5,
+        distanceFromSun: 3,
     },
     {
         name: "Mars",
-        orbitalPeriod: 1.88,
-        rotationPeriod: 1.03,
-        distanceFromSun: 1,
+        orbitalPeriod:   4,
+        rotationPeriod:  6,
+        distanceFromSun: 4,
     },
     {
         name: "Jupiter",
-        orbitalPeriod: 11.9,
-        rotationPeriod: 0.415,
-        distanceFromSun: 1,
+        orbitalPeriod:   5,
+        rotationPeriod:  1,
+        distanceFromSun: 5,
     },
     {
         name: "Saturn",
-        orbitalPeriod: 29.4,
-        rotationPeriod: 0.445,
-        distanceFromSun: 1,
+        orbitalPeriod:   6,
+        rotationPeriod:  2,
+        distanceFromSun: 6,
     },
     {
         name: "Uranus",
-        orbitalPeriod: 83.7,
-        rotationPeriod: -0.720,
-        distanceFromSun: 1,
+        orbitalPeriod:    7,
+        rotationPeriod: - 4,
+        distanceFromSun:  7,
     },
     {
         name: "Neptune",
-        orbitalPeriod: 163.7,
-        rotationPeriod: 0.673,
-        distanceFromSun: 1,
+        orbitalPeriod:   8,
+        rotationPeriod:  3,
+        distanceFromSun: 8,
     },
     {
         name: "Pluto",
-        orbitalPeriod: 247.9,
-        rotationPeriod: 6.41,
-        distanceFromSun: 1,
+        orbitalPeriod:   9,
+        rotationPeriod:  7,
+        distanceFromSun: 9,
     },
 ]
 
@@ -140,6 +153,7 @@ gltfLoader.load(
             // If no matching info is found, set default values
             const orbitalPeriod = planetInfo ? planetInfo.orbitalPeriod : 1.0;
             const rotationPeriod = planetInfo ? planetInfo.rotationPeriod : 1.0;
+            const distanceFromSun = planetInfo ? planetInfo.distanceFromSun : 0.0;
 
             let data = {
                 name: child.name,
@@ -169,7 +183,7 @@ gltfLoader.load(
             let mesh = new THREE.Mesh(planet.geometry, planet.material)
             planet.mesh = mesh
             mesh.position.set(planet.position.x, planet.position.y, planet.position.z)
-            mesh.rotation.set(planet.rotation.x, planet.rotation.y, planet.rotation.z)
+            mesh.rotation.set(0, 0, 0)
             scene.add(mesh)
         }
     }
@@ -384,11 +398,11 @@ const tick = () =>
     for(const planet of extractedPlanetData){
         
         // Orbit Speed and Distance
-        planet.mesh.position.x = Math.cos(planetAngle * Math.log((planet.orbitalPeriod * 4.15) + 1)) * (Math.log((planet.distanceFromSun * 2.59)+ 1) * 15)
-        planet.mesh.position.z = Math.sin(planetAngle * Math.log((planet.orbitalPeriod * 4.15) + 1)) * (Math.log((planet.distanceFromSun * 2.59) + 1) * 15)
+        planet.mesh.position.x = Math.cos(planetAngle * planet.orbitalPeriod * debugObject.orbiteRate) * (Math.log((planet.distanceFromSun * debugObject.distanceFromSunRate)+ 1) * 15)
+        planet.mesh.position.z = Math.sin(planetAngle * planet.orbitalPeriod * debugObject.orbiteRate )* (Math.log((planet.distanceFromSun * debugObject.distanceFromSunRate) + 1) * 15)
         
         // Planet Rotation
-        planet.mesh.rotation.y = elapsedTime * planet.rotationPeriod
+        planet.mesh.rotation.y = elapsedTime * planet.rotationPeriod * debugObject.rotationRate
     }
 
     // Update controls
