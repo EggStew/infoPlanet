@@ -13,3 +13,64 @@ html, body {
     left: 0;
     outline: none;
 }
+
+.nav-bar {
+    position: fixed;
+    bottom: 2%;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+.nav-bar img {
+    width: 80px;
+    height: auto;
+    padding: 5px;
+    transition: width 0.5s ease; /* Adding transition for smooth effect */
+}
+
+.nav-bar img:hover {
+    width: 100px; /* Increasing the width on hover */
+}
+
+/* Media Query for Mobile Devices */
+@media only screen and (max-width: 800px) {
+
+    .nav-bar img {
+        width: 70px; /* Adjust image width for mobile */
+        padding: 2px; /* Adjust padding for mobile */
+    }
+
+    .nav-bar img:hover {
+        width: 60px; /* Adjust hover width for mobile */
+    }
+}
+
+/* Media Query for Mobile Devices */
+@media only screen and (max-width: 600px) {
+
+    .nav-bar img {
+        width: 50px; /* Adjust image width for mobile */
+        padding: 2px; /* Adjust padding for mobile */
+    }
+
+    .nav-bar img:hover {
+        width: 40px; /* Adjust hover width for mobile */
+    }
+}
+
+/* Media Query for Mobile Devices */
+@media only screen and (max-width: 400px) {
+
+    .nav-bar img {
+        width: 30px; /* Adjust image width for mobile */
+        padding: 2px; /* Adjust padding for mobile */
+    }
+
+    .nav-bar img:hover {
+        width: 20px; /* Adjust hover width for mobile */
+    }
+}

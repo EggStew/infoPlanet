@@ -2,6 +2,7 @@ import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import GUI from 'lil-gui'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
+import { gsap } from "gsap"
 
 /**
  * Loaders
@@ -30,6 +31,7 @@ window.addEventListener('mousemove', (event) => {
 /**
  * Base
  */
+
 // Debug
 const gui = new GUI()
 const debugObject = {}
@@ -57,18 +59,25 @@ gui.addColor(scene, 'background').onChange(() => {
 /**
  * Lights
  */
-const ambientLight = new THREE.AmbientLight(0xffffff, 1)
-scene.add(ambientLight)
 
-gui.add(ambientLight, 'intensity').min(0).max(3).step(0.001).name('ambietLightIntensity')
+// Ambient light
+const ambientLight = new THREE.AmbientLight(0xffffff, 0.15);
+scene.add(ambientLight);
 
+gui.add(ambientLight, 'intensity').min(0).max(3).step(0.001).name('ambientLightIntensity');
 
-const directionalLight = new THREE.DirectionalLight(0x00fffc, 0.9)
-directionalLight.position.set(1, 0.25, 0)
-scene.add(directionalLight)
+// Point light (sun)
+const pointLight = new THREE.PointLight(0xffffff, 5); // Use white color for sun light
+pointLight.position.set(0, 0, 0); // Position the light at the center of the scene
+// Adjust the distance property of the point light
+pointLight.distance = 100; // Increase or decrease as needed
+scene.add(pointLight);
 
-gui.add(directionalLight, 'intensity').min(0).max(3).step(0.001).name('pointLightIntensity')
+gui.add(pointLight, 'intensity').min(0).max(3).step(0.001).name('pointLightIntensity');
 
+// Add a helper to visualize the position of the point light (optional)
+const pointLightHelper = new THREE.PointLightHelper(pointLight, 1); // Adjust the size of the helper if needed
+scene.add(pointLightHelper);
 /**
  * Models
  */
@@ -155,6 +164,10 @@ gltfLoader.load(
             const rotationPeriod = planetInfo ? planetInfo.rotationPeriod : 1.0;
             const distanceFromSun = planetInfo ? planetInfo.distanceFromSun : 0.0;
 
+            // Modify material to remove texture from inside
+            child.material.side = THREE.FrontSide; // Only show texture on the front side
+
+
             let data = {
                 name: child.name,
                 geometry: child.geometry,
@@ -188,8 +201,6 @@ gltfLoader.load(
         }
     }
 )
-
-console.log(extractedPlanetData);
 
 
 
@@ -327,49 +338,38 @@ window.addEventListener('resize', () =>
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 })
 
-// Full Screen Toggle
-
-window.addEventListener('dblclick', () => 
-{
-    const fullscreenElement = document.fullscreenElement || document.webkitFullscreenElement
-
-    if(!fullscreenElement)
-    {   
-        if(canvas.requestFullscreen)
-        {
-            canvas.requestFullscreen()
-        } 
-        else if(canvas.webkitRequestFullscreen)
-        {
-            canvas.webkitRequestFullscreen()
-        }
-    }
-    else
-    {
-        if(document.exitFullscreen)
-        {
-            document.exitFullscreen()
-        } 
-        else if(document.webkitExitFullscreen)
-        {
-            document.webkitExitFullscreen()
-        }
-    }
-})
 
 /**
  * Camera
  */
 // Base camera
 const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100)
-camera.position.x = -10
-camera.position.y = 10
-camera.position.z = 15
+// Set initial camera position and lookAt target to the center of the scene
+camera.position.set(-10, 10, 15); // Initial camera position
+camera.lookAt(0, 0, 0); // Look at the center of the scene
+
 scene.add(camera)
 
-// Controls
-const controls = new OrbitControls(camera, canvas)
-controls.enableDamping = true
+/**
+ * Event Listeners
+ */
+
+// Get all the image elements
+const images = document.querySelectorAll('.nav-bar img');
+
+let selectedPlanet = null;
+
+// Loop through each image element and attach a click event listener
+images.forEach(image => {
+    image.addEventListener('click', function() {
+        // Find the selected planet data
+        selectedPlanet = extractedPlanetData.find(planet => planet.name === this.id);
+    });
+});
+
+// // Controls
+// const controls = new OrbitControls(camera, canvas)
+// controls.enableDamping = true
 
 /**
  * Renderer
@@ -405,8 +405,15 @@ const tick = () =>
         planet.mesh.rotation.y = elapsedTime * planet.rotationPeriod * debugObject.rotationRate
     }
 
-    // Update controls
-    controls.update()
+     // Update camera position to track the selected planet
+     if (selectedPlanet) {
+        const { x, y, z } = selectedPlanet.mesh.position;
+        camera.position.set(x - 1, y + 1, z + 2);
+        camera.lookAt(selectedPlanet.mesh.position);
+    }
+
+    // // Update controls
+    // controls.update()
 
     // Render
     renderer.render(scene, camera)
