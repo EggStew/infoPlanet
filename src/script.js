@@ -61,23 +61,18 @@ gui.addColor(scene, 'background').onChange(() => {
  */
 
 // Ambient light
-const ambientLight = new THREE.AmbientLight(0xffffff, 0.15);
+const ambientLight = new THREE.AmbientLight(0xffffff, 0.65);
 scene.add(ambientLight);
 
 gui.add(ambientLight, 'intensity').min(0).max(3).step(0.001).name('ambientLightIntensity');
 
 // Point light (sun)
-const pointLight = new THREE.PointLight(0xffffff, 5); // Use white color for sun light
+const pointLight = new THREE.PointLight(0xffffff, 10, 200); // Use white color for sun light, decrease intensity and distance
 pointLight.position.set(0, 0, 0); // Position the light at the center of the scene
-// Adjust the distance property of the point light
-pointLight.distance = 100; // Increase or decrease as needed
 scene.add(pointLight);
 
 gui.add(pointLight, 'intensity').min(0).max(3).step(0.001).name('pointLightIntensity');
 
-// Add a helper to visualize the position of the point light (optional)
-const pointLightHelper = new THREE.PointLightHelper(pointLight, 1); // Adjust the size of the helper if needed
-scene.add(pointLightHelper);
 /**
  * Models
  */
@@ -166,7 +161,6 @@ gltfLoader.load(
 
             // Modify material to remove texture from inside
             child.material.side = THREE.FrontSide; // Only show texture on the front side
-
 
             let data = {
                 name: child.name,
