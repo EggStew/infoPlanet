@@ -204,10 +204,10 @@ gltfLoader.load(
 
 // Particle Parameters
 const parameters = {}
-parameters.count = 10000
+parameters.count = 15000
 parameters.size = 0.05
 parameters.maxRadius = 45
-parameters.minRadius = 25
+parameters.minRadius = 35
 parameters.insideColor = '#ff9595'
 parameters.outsideColor = '#1b3984'
 
@@ -360,6 +360,23 @@ images.forEach(image => {
         selectedPlanet = extractedPlanetData.find(planet => planet.name === this.id);
     });
 });
+
+const homeButton = document.getElementById('house');
+
+const iconButton = document.getElementById('info');
+
+homeButton.addEventListener('click', () => {
+    selectedPlanet = null
+    gsap.to(camera.position, { duration: 5, x: -10, y: 10, z: 15 });
+    gsap.to(camera.rotation, { duration: 5, x: 0, y: 0, z: 0 });
+    gsap.to(camera.rotation, { duration: 5, onUpdate: () => {
+        camera.lookAt(0, 0, 0);
+    }});
+})
+
+iconButton.addEventListener('click', () => {
+    console.log("clicked")
+})
 
 // // Controls
 // const controls = new OrbitControls(camera, canvas)

@@ -14,6 +14,28 @@ html, body {
     outline: none;
 }
 
+.home-info-buttons {
+    position: fixed;
+    margin: 5px;
+    top: 2%;
+    left: 5%;
+    display: flex;
+    justify-content: space-between;
+    width: auto; /* Adjust the width as needed */
+}
+
+.home-info-buttons .icon {
+    color: white;
+    font-size: 50px;
+    transition: font-size 0.5s ease;
+    margin: 0 5px; /* Adjust the gap size */
+    padding: 5px; /* Adjust the padding to maintain gap size */
+}
+
+.home-info-buttons .icon:hover {
+    font-size: 55px;
+}
+
 .nav-bar {
     position: fixed;
     bottom: 2%;
